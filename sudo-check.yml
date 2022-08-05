@@ -1,0 +1,19 @@
+---
+  - name: test-connection
+    gather_facts: false
+    hosts: all
+    user: xyz                   ## Replace with your username###
+    become: true
+    tasks:
+      - name: test connection
+        shell: "sudo -lU xyz"
+        register: nc
+        ignore_errors: true
+
+      - name: ok connections
+        debug: var=nc.stderr
+        when: "nc.rc == 0"
+
+      - name: failed connections
+        debug: var=nc.stderr
+        when: "nc.rc != 0"
