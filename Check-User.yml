@@ -1,0 +1,15 @@
+---
+  - name: test-connection
+    gather_facts: false
+    hosts: all
+    user: ustadm
+    become: true
+    tasks:
+      - name: Check for users
+        with_items:
+         - xyz
+         - abc  
+        changed_when: false
+        args:
+          warn: no
+        command: grep {{ item }} -q /etc/passwd
