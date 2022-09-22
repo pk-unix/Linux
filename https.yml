@@ -1,0 +1,15 @@
+---
+- hosts: web1
+  tasks:
+    - name: Enable HTTPS for ansible controller
+      firewalld:
+        source: 172.20.1.2
+        service: https
+        zone: internal
+        state: enabled
+        permanent: yes
+
+    - service:
+        name: firewalld
+        state: reloaded
+        ### firewall-cmd --list-all --zone=internal  - TO verify, SSH to web1 server and run###
