@@ -1,4 +1,4 @@
---
+---
 - name: extract local.zip to web1
   hosts: web1
   tasks:
