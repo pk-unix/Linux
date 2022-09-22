@@ -1,0 +1,10 @@
+--- 
+- hosts: web1
+  tasks:
+    - firewalld:        
+        port: 161/udp
+        zone: block
+        permanent: yes
+        immediate: yes
+        state: enabled
+        ###firewall-cmd --list-ports --zone=block - To verify, SSH to web1 server
