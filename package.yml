@@ -1,0 +1,7 @@
+---
+- name: Install web on CentOS
+  hosts: all
+  tasks:
+  - yum:
+      name: httpd
+      state: installed
