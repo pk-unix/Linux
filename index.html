@@ -29,6 +29,19 @@ th{color:var(--muted);font-weight:600}
 a{color:var(--accent2)}
 footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0;color:var(--muted);font-size:13px}
 .note{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;margin:18px 0;font-size:14px;color:var(--muted)}
+
+.term-window{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.term-titlebar{background:#1b222d;padding:9px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border)}
+.term-titlebar .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.term-titlebar .dot.r{background:#ff5f57}.term-titlebar .dot.y{background:#febc2e}.term-titlebar .dot.g{background:#28c840}
+.term-path{margin-left:12px;color:var(--muted);font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.term-body{background:#0a0d12;padding:18px 20px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.7;overflow-x:auto;white-space:pre}
+.term-prompt{color:#4ee16b}
+.term-ok{color:#4ee16b}
+.term-warn{color:#f2c14e}
+.term-err{color:#ff6b6b}
+.term-muted{color:var(--muted)}
+.term-cyan{color:#7cd6ff}
 </style>
 </head>
 <body>
@@ -36,10 +49,38 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0;color:v
 <div class="wrap">
 <div class="hero" id="top">
 <h1>Linux</h1>
-<p>- **[hpc-toolkit](https://github.com/pk-unix/hpc-toolkit)** — NUMA tuning, huge pages, InfiniBand, CPU governors, HPC sysctl configs</p>
+<p>General-purpose Linux sysadmin scripts, shell utilities, Ansible playbooks, and bash tips. No GPU or HPC-specific content here &mdash; see <a href="https://github.com/pk-unix/gpu-toolkit">gpu-toolkit</a> and <a href="https://github.com/pk-unix/hpc-toolkit">hpc-toolkit</a> for that.</p>
 </div>
 
 <div class="clone-box">git clone https://github.com/pk-unix/Linux.git<br>cd Linux</div>
+<h2>What it looks like</h2>
+<div class="term-window">
+  <div class="term-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="term-path">~/Linux</span></div>
+  <div class="term-body"><span class="term-prompt">$</span> ./sysadmin/node-summary.sh
+=== Node Summary: web-02 @ 2026-09-09 19:20:11 ===
+
+OS:      Ubuntu 22.04.4 LTS (kernel 5.15.0-127-generic)
+CPU:     32 cores @ 2.4GHz, load avg: 3.2, 3.8, 4.1
+Memory:  128GB total, 41GB used, 87GB available
+Disk:    <span class="term-ok">/  62% used</span>   <span class="term-warn">/var  84% used ⚠</span>   /home  18% used
+Network: eth0 up, 1.2Gb/s rx, 340Mb/s tx
+
+Top processes by CPU:
+  PID    CPU%  MEM%  COMMAND
+  18442  34.1  8.2   /usr/bin/postgres
+  9931   12.0  3.1   nginx: worker process
+  22105  8.4   14.2  java -jar app.jar
+
+<span class="term-prompt">$</span> ./sysadmin/find-large-files.sh /var --dirs
+  4.1G   /var/log
+  2.8G   /var/lib/docker
+  1.1G   /var/cache/apt
+
+<span class="term-prompt">$</span> source shell/useful-aliases.sh
+<span class="term-ok">✓ Loaded 24 aliases and functions</span></div>
+</div>
+<p class="note">This is an illustrative example of real command output &mdash; run the scripts on an actual node to see your own results.</p>
+
 <h2>Source</h2>
 <h3>shell/useful-aliases.sh</h3>
 <pre><code class="language-bash">#!/bin/bash
