@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux</title>
+<style>
+:root{--bg:#0b0f14;--panel:#12171f;--panel2:#171d27;--border:#242c38;
+--text:#e6e9ee;--muted:#9aa4b2;--accent:#76b900;--accent2:#9fe870;--code-bg:#0d1219}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+header.top{position:sticky;top:0;z-index:10;background:var(--panel);border-bottom:1px solid var(--border);padding:14px 0}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between}
+header.top a{color:var(--text);text-decoration:none;font-weight:700}
+.badge{background:var(--accent);color:#08130a;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:10px}
+.hero{padding:48px 0 16px}
+.hero h1{font-size:2.2rem;margin:.2em 0}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:760px}
+.clone-box{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;overflow-x:auto;margin:18px 0}
+h2{color:var(--accent2);border-bottom:1px solid var(--border);padding-bottom:8px;margin-top:44px}
+h3{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--text);font-size:1.05rem;margin-top:28px}
+h3 .purpose{color:var(--muted);font-family:-apple-system,sans-serif;font-weight:400;font-size:.9rem;display:block;margin-top:4px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;font-size:13px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+table{width:100%;border-collapse:collapse;margin:16px 0}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-size:14px}
+th{color:var(--muted);font-weight:600}
+a{color:var(--accent2)}
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0;color:var(--muted);font-size:13px}
+.note{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;margin:18px 0;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="#top">Linux</a><span class="badge">pk-unix</span></div></header>
+<div class="wrap">
+<div class="hero" id="top">
+<h1>Linux</h1>
+<p>- **[hpc-toolkit](https://github.com/pk-unix/hpc-toolkit)** — NUMA tuning, huge pages, InfiniBand, CPU governors, HPC sysctl configs</p>
+</div>
+
+<div class="clone-box">git clone https://github.com/pk-unix/Linux.git<br>cd Linux</div>
+<h2>Source</h2>
+<h3>shell/useful-aliases.sh</h3>
+<pre><code class="language-bash">#!/bin/bash
+# useful-aliases.sh — Shell aliases and functions for Linux power users.
+# Source this file or add to ~/.bashrc / ~/.zshrc:
+#   source ~/Linux/shell/useful-aliases.sh
+
+# ── Navigation ───────────────────────────────────────────────────────────────
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ll='ls -lhF --color=auto'
+alias la='ls -lhAF --color=auto'
+alias lt='ls -lhFt --color=auto'           # sort by time
+alias lS='ls -lhFS --color=auto'           # sort by size
+alias tree1='tree -L 1'
+alias tree2='tree -L 2'
+
+# ── Safety ───────────────────────────────────────────────────────────────────
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# ── System info ──────────────────────────────────────────────────────────────
+alias meminfo='free -h &amp;&amp; echo "" &amp;&amp; cat /proc/meminfo | grep -E "MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree|HugePages"'
+alias cpuinfo='lscpu | grep -E "Model name|Socket|Core|Thread|CPU MHz|NUMA"'
+alias diskinfo='df -hT | grep -vE "tmpfs|udev"'
+alias netinfo='ip -brief addr &amp;&amp; echo "" &amp;&amp; ip route'
+alias openports='ss -tulnp'
+alias whousing='lsof +D'                   # lsof +D /path — who has files open
+alias psmem='ps aux --sort=-%mem | head -15'
+alias pscpu='ps aux --sort=-%cpu | head -15'
+
+# ── Files ────────────────────────────────────────────────────────────────────
+alias duh='du -h --max-depth=1 | sort -rh'   # disk usage of current dir
+alias biggest='find . -type f -printf "%s %p\n" | sort -rn | head -20 | numfmt --to=iec --field=1'
+alias recent='find . -type f -newer /tmp -printf "%T@ %p\n" | sort -rn | head -20 | cut -d" " -f2-'
+
+# ── Processes ────────────────────────────────────────────────────────────────
+alias pstree='pstree -p'
+alias killall9='killall -9'
+alias zombie='ps axo stat,ppid,pid,comm | grep -w Z'
+
+# ── Network ──────────────────────────────────────────────────────────────────
+alias myip='curl -s ifconfig.me'
+alias listening='ss -tulnp | grep LISTEN'
+alias connections='ss -tnp | grep ESTAB'
+alias pingg='ping -c 4 8.8.8.8'
+
+# ── Shortcuts ────────────────────────────────────────────────────────────────
+alias h='history | tail -30'
+alias hgrep='history | grep'
+alias reload='source ~/.bashrc'
+alias path='echo $PATH | tr ":" "\n"'
+alias now='date +"%Y-%m-%d %H:%M:%S"'
+alias week='date +%V'
+
+# ── Grep with color ───────────────────────────────────────────────────────────
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# ── Tar shortcuts ────────────────────────────────────────────────────────────
+alias tarc='tar -czf'         # tarc archive.tar.gz dir/
+alias tarx='tar -xzf'         # tarx archive.tar.gz
+alias tarl='tar -tzf'         # tarl archive.tar.gz — list contents
+
+# ── Functions ────────────────────────────────────────────────────────────────
+
+# mkcd — mkdir + cd in one
+mkcd() { mkdir -p "$1" &amp;&amp; cd "$1"; }
+
+# extract — universal archive extractor
+extract() {
+    [[ -f "$1" ]] || { echo "Not a file: $1"; return 1; }
+    case "$1" in
+        *.tar.gz|*.tgz)  tar -xzf "$1"  ;;
+        *.tar.bz2|*.tbz) tar -xjf "$1"  ;;
+        *.tar.xz)        tar -xJf "$1"  ;;
+        *.tar)           tar -xf  "$1"  ;;
+        *.zip)           unzip    "$1"  ;;
+        *.gz)            gunzip   "$1"  ;;
+        *.bz2)           bunzip2  "$1"  ;;
+        *.xz)            unxz     "$1"  ;;
+        *.7z)            7z x     "$1"  ;;
+        *)               echo "Unknown format: $1" ;;
+    esac
+}
+
+# psgrep — grep processes by name, excluding the grep itself
+psgrep() { ps aux | grep -v grep | grep -i "$1"; }
+
+# portcheck — check if a port is open on a host
+portcheck() { nc -zv "${1:-localhost}" "${2:-80}" 2&gt;&amp;1; }
+
+# sshretry — SSH with auto-retry (useful for nodes rebooting)
+sshretry() {
+    local host=$1; shift
+    until ssh "$host" "$@"; do
+        echo "Retrying in 5s…"; sleep 5
+    done
+}
+
+# fhere — find file by name in current directory
+fhere() { find . -iname "*${1}*" 2&gt;/dev/null; }
+
+# countdown — countdown timer
+countdown() {
+    local secs=${1:-10}
+    while (( secs &gt; 0 )); do
+        printf "\r%3d seconds remaining…" "$secs"
+        sleep 1; (( secs-- ))
+    done
+    echo -e "\rDone!                  "
+}
+</code></pre>
+<h3>ansible/Check-User.yml</h3>
+<pre><code class="language-yaml">---
+  - name: test-connection
+    gather_facts: false
+    hosts: all
+    user: ustadm
+    become: true
+    tasks:
+      - name: Check for users
+        with_items:
+         - xyz
+         - abc  
+        changed_when: false
+        args:
+          warn: no
+        command: grep {{ item }} -q /etc/passwd
+</code></pre>
+<h3>ansible/blank_file.yml</h3>
+<pre><code class="language-yaml">---
+- name: Create file perm.txt
+  hosts: web1
+  tasks:
+   - name: Create file perm.txt
+     file: path=/opt/data/perm.txt mode=0640 state=touch</code></pre>
+<h3>ansible/block.yml</h3>
+<pre><code class="language-yaml">--- 
+- hosts: web1
+  tasks:
+    - firewalld:        
+        port: 161/udp
+        zone: block
+        permanent: yes
+        immediate: yes
+        state: enabled
+        ###firewall-cmd --list-ports --zone=block - To verify, SSH to web1 server</code></pre>
+<h3>ansible/cleanup_tmp.yml</h3>
+<pre><code class="language-yaml">---
+- name: Cleanup /tmp after every reboot
+  hosts: node00
+  tasks:
+   - cron:
+      name: cleanup
+      job: rm -rf /tmp/*
+      special_time: reboot</code></pre>
+<h3>ansible/cron_clear_lastlog.yml</h3>
+<pre><code class="language-yaml">---
+- name: Create a cron job to clear last log
+  hosts: node00
+  tasks:
+   - name: Create cron job
+     cron:
+       name: "Clear Lastlog"
+       minute: "0"
+       hour: "0"
+       job: echo "" &gt; /var/log/lastlog</code></pre>
+<h3>ansible/extract.yml</h3>
+<pre><code class="language-yaml">---
+- name: extract local.zip to web1
+  hosts: web1
+  tasks:
+  - unarchive:
+      src: local.zip
+      dest: /tmp</code></pre>
+<h3>ansible/extract_remove.yml</h3>
+<pre><code class="language-yaml">---
+- name: Extract data.tar.gz on web1
+  hosts: web1
+  tasks:
+  - unarchive:
+      src: /root/data.tar.gz
+      dest: /srv
+      remote_src: yes
+
+  - file: path=/root/data.tar.gz state=absent</code></pre>
+<h3>ansible/find.yml</h3>
+<pre><code class="language-yaml">---
+- hosts: web1
+  tasks:
+    - name: Find files
+      find:
+        paths: /opt/data
+        age: 2m
+        size: 1m
+        recurse: yes
+      register: file
+
+    - name: Copy files
+      command: "cp {{ item.path }} /opt"
+      with_items: "{{ file.files }}"</code></pre>
+<h3>ansible/firewall.yml</h3>
+<pre><code class="language-yaml">---
+- hosts: web1
+  tasks:
+   - yum: name=firewalld state=installed
+   - service: name=firewalld state=started</code></pre>
+<h3>ansible/https.yml</h3>
+<pre><code class="language-yaml">---
+- hosts: web1
+  tasks:
+    - name: Enable HTTPS for ansible controller
+      firewalld:
+        source: 172.20.1.2
+        service: https
+        zone: internal
+        state: enabled
+        permanent: yes
+
+    - service:
+        name: firewalld
+        state: reloaded
+        ### firewall-cmd --list-all --zone=internal  - TO verify, SSH to web1 server and run###</code></pre>
+<h3>ansible/index.yml</h3>
+<pre><code class="language-yaml">---
+- name: Create index.html on web1
+  hosts: web1
+  tasks:
+  - lineinfile:
+      path: /var/www/html/index.html
+      line: 'This line was added using Ansible lineinfile module!'
+      create: yes</code></pre>
+<h3>ansible/package.yml</h3>
+<pre><code class="language-yaml">---
+- name: Install web on CentOS
+  hosts: all
+  tasks:
+  - yum:
+      name: httpd
+      state: installed</code></pre>
+<h3>ansible/remove_cronjob.yml</h3>
+<pre><code class="language-yaml">---
+- name: remove cron job from node00
+  hosts: node00
+  tasks:
+  - name: Remove cron job
+    cron:
+      name: "Check Memory"
+      state: absent</code></pre>
+<h3>ansible/script_cron.yml</h3>
+<pre><code class="language-yaml">---
+- name: Create a cron job to run free.sh script
+  hosts: node00
+  tasks:
+   - name: Create cron job
+     cron:
+       name: "Free Memory Check"
+       minute: "0"
+       hour: "*/2"
+       job: "sh /root/free.sh"</code></pre>
+<h3>ansible/sudo-check.yml</h3>
+<pre><code class="language-yaml">---
+  - name: test-connection
+    gather_facts: false
+    hosts: all
+    user: xyz                   ## Replace with your username###
+    become: true
+    tasks:
+      - name: test connection
+        shell: "sudo -lU xyz"
+        register: nc
+        ignore_errors: true
+
+      - name: ok connections
+        debug: var=nc.stderr
+        when: "nc.rc == 0"
+
+      - name: failed connections
+        debug: var=nc.stderr
+        when: "nc.rc != 0"
+</code></pre>
+<h3>ansible/web2-config.yml</h3>
+<pre><code class="language-yaml">---
+- hosts: web2
+  tasks:
+    - name: Change Apache port
+      replace:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: "Listen 80"
+        replace: "Listen 8082"
+
+    - name: Restart Apache service
+      service:
+        name: httpd
+        state: restarted</code></pre>
+<h3>ansible/whitelist.yml</h3>
+<pre><code class="language-yaml">---
+- hosts: web1
+  tasks:
+   - firewalld:
+      source: 172.20.1.101
+      state: enabled
+      zone: internal
+      permanent: yes
+      immediate: yes</code></pre>
+<h3>ansible/zip.yml</h3>
+<pre><code class="language-yaml">---
+- name: Zip archive opt.zip
+  hosts: web1
+  tasks:
+   - archive:
+       path: /opt
+       dest: /root/opt.zip
+       format: zip</code></pre>
+<h3>sysadmin/find-large-files.sh</h3>
+<pre><code class="language-bash">#!/bin/bash
+# Find large files and directories on any filesystem.
+#
+# Usage:
+#   ./find-large-files.sh                    # top 20 files in current dir
+#   ./find-large-files.sh /scratch/username  # specific path
+#   ./find-large-files.sh /tmp --dirs        # top directories instead
+#   ./find-large-files.sh /var --older 30    # files older than 30 days
+
+set -euo pipefail
+
+PATH_ARG="${1:-.}"
+MODE="${2:---files}"
+EXTRA="${3:-}"
+
+case "$MODE" in
+    --dirs)
+        echo "=== Top 20 directories by size under $PATH_ARG ==="
+        du -h --max-depth=3 "$PATH_ARG" 2&gt;/dev/null | sort -rh | head -20
+        ;;
+    --older)
+        DAYS="${EXTRA:-30}"
+        echo "=== Files older than $DAYS days under $PATH_ARG ==="
+        find "$PATH_ARG" -type f -mtime "+$DAYS" -printf '%s %p\n' 2&gt;/dev/null | \
+            sort -rn | head -20 | \
+            awk '{s=$1; sub(/^[^ ]+ /,"",$0);
+                  if(s&gt;1073741824) printf "%8.1f GB  %s\n",s/1073741824,$0;
+                  else if(s&gt;1048576) printf "%8.1f MB  %s\n",s/1048576,$0;
+                  else printf "%8.1f KB  %s\n",s/1024,$0}'
+        ;;
+    *)
+        echo "=== Top 20 largest files under $PATH_ARG ==="
+        find "$PATH_ARG" -type f -printf '%s %p\n' 2&gt;/dev/null | \
+            sort -rn | head -20 | \
+            awk '{s=$1; sub(/^[^ ]+ /,"",$0);
+                  if(s&gt;1073741824) printf "%8.1f GB  %s\n",s/1073741824,$0;
+                  else if(s&gt;1048576) printf "%8.1f MB  %s\n",s/1048576,$0;
+                  else printf "%8.1f KB  %s\n",s/1024,$0}'
+        ;;
+esac
+</code></pre>
+<h3>sysadmin/node-summary.sh</h3>
+<pre><code class="language-bash">#!/bin/bash
+# One-shot node health summary — CPU, memory, disk, network, top processes.
+# Great for quick triage when SSHing into an unfamiliar node.
+#
+# Usage:  ./node-summary.sh
+
+set -euo pipefail
+
+CYN='\033[0;36m'; GRN='\033[0;32m'; YEL='\033[0;33m'; RST='\033[0m'
+
+divider() { echo -e "${CYN}── $1 $(printf '─%.0s' $(seq 1 $((50-${#1}))))${RST}"; }
+
+echo ""
+echo -e "${CYN}╔══════════════════════════════════════╗"
+echo    "║  Node Summary: $(hostname)"
+echo -e "╚══════════════════════════════════════╝${RST}"
+echo "$(date)"
+echo ""
+
+divider "OS / Kernel"
+echo "  OS:     $(grep PRETTY_NAME /etc/os-release 2&gt;/dev/null | cut -d= -f2 | tr -d '"')"
+echo "  Kernel: $(uname -r)"
+echo "  Uptime: $(uptime -p 2&gt;/dev/null || uptime)"
+echo ""
+
+divider "CPU"
+echo "  Model:  $(grep 'model name' /proc/cpuinfo | head -1 | cut -d: -f2 | xargs)"
+echo "  Cores:  $(nproc) logical"
+echo "  Load:   $(cat /proc/loadavg | awk '{print $1,$2,$3}') (1m 5m 15m)"
+echo ""
+
+divider "Memory"
+free -h | awk 'NR&lt;=3{printf "  %-8s %8s %8s %8s\n",$1,$2,$3,$4}'
+echo ""
+
+divider "Disk"
+df -h --output=source,size,used,avail,pcent,target 2&gt;/dev/null | \
+    grep -vE "tmpfs|udev|overlay" | head -8 | \
+    awk 'NR==1{printf "  %-20s %6s %6s %6s %5s  %s\n",$1,$2,$3,$4,$5,$6; next}
+              {printf "  %-20s %6s %6s %6s %5s  %s\n",$1,$2,$3,$4,$5,$6}'
+echo ""
+
+divider "Network interfaces"
+ip -brief addr show 2&gt;/dev/null | grep -v "^lo" | \
+    awk '{printf "  %-12s %-10s %s\n",$1,$2,$3}'
+echo ""
+
+divider "Top 5 CPU processes"
+ps aux --sort=-%cpu 2&gt;/dev/null | \
+    awk 'NR==1{printf "  %-10s %5s %5s %s\n","USER","CPU%","MEM%","COMMAND"; next}
+         NR&lt;=6{printf "  %-10s %5s %5s %s\n",$1,$3,$4,$11}'
+echo ""
+
+divider "Top 5 memory processes"
+ps aux --sort=-%mem 2&gt;/dev/null | \
+    awk 'NR==1{printf "  %-10s %5s %5s %s\n","USER","CPU%","MEM%","COMMAND"; next}
+         NR&lt;=6{printf "  %-10s %5s %5s %s\n",$1,$3,$4,$11}'
+echo ""
+</code></pre>
+<h3>sysadmin/watch-logs.sh</h3>
+<pre><code class="language-bash">#!/bin/bash
+# Tail multiple log files at once with color-coded output per file.
+# Each file gets a distinct prefix so you can see which log a line came from.
+#
+# Usage:
+#   ./watch-logs.sh /var/log/syslog /var/log/auth.log
+#   ./watch-logs.sh /var/log/*.log
+
+set -euo pipefail
+
+COLORS=("\033[0;32m" "\033[0;36m" "\033[0;33m" "\033[0;35m" "\033[0;34m" "\033[1;32m")
+RST="\033[0m"
+
+[[ $# -eq 0 ]] &amp;&amp; { echo "Usage: $0 &lt;file1&gt; [file2] ..."; exit 1; }
+
+i=0
+pids=()
+for f in "$@"; do
+    [[ -f "$f" ]] || { echo "Skipping: $f (not found)"; continue; }
+    color="${COLORS[$((i % ${#COLORS[@]}))]}"
+    label=$(basename "$f")
+    tail -F "$f" 2&gt;/dev/null | while IFS= read -r line; do
+        printf "${color}[%-20s]${RST} %s\n" "$label" "$line"
+    done &amp;
+    pids+=($!)
+    (( i++ )) || true
+done
+
+trap 'kill "${pids[@]}" 2&gt;/dev/null' EXIT INT TERM
+wait
+</code></pre>
+<h3>sysadmin/zombie-hunt.sh</h3>
+<pre><code class="language-bash">#!/bin/bash
+# Find zombie processes and identify their parent (the process that should reap them).
+#
+# Usage:  ./zombie-hunt.sh
+
+set -euo pipefail
+
+YEL='\033[0;33m'; RED='\033[0;31m'; GRN='\033[0;32m'; RST='\033[0m'
+
+echo "=== Zombie Process Hunt: $(hostname) ==="
+echo ""
+
+zombies=$(ps axo pid,ppid,user,stat,comm | awk '$4~/Z/{print}')
+
+if [[ -z "$zombies" ]]; then
+    echo -e "${GRN}✓  No zombie processes found.${RST}"
+    exit 0
+fi
+
+count=$(echo "$zombies" | wc -l)
+echo -e "${YEL}Found $count zombie(s):${RST}"
+echo ""
+printf "  %-8s %-8s %-12s %-6s %s\n" "PID" "PPID" "USER" "STAT" "COMMAND"
+echo "$zombies" | while read -r pid ppid user stat comm; do
+    parent_cmd=$(ps -o comm= -p "$ppid" 2&gt;/dev/null || echo "?")
+    parent_user=$(ps -o user= -p "$ppid" 2&gt;/dev/null || echo "?")
+    printf "  %-8s %-8s %-12s %-6s %-20s  ← parent: PID %s (%s, %s)\n" \
+        "$pid" "$ppid" "$user" "$stat" "$comm" "$ppid" "$parent_user" "$parent_cmd"
+done
+
+echo ""
+echo -e "${YEL}To resolve:${RST}"
+echo "  kill -CHLD &lt;PPID&gt;   # signal parent to reap"
+echo "  kill -TERM &lt;PPID&gt;   # or terminate the parent"
+</code></pre>
+<h2>Full README</h2>
+<pre><code># Linux
+
+General-purpose Linux sysadmin scripts, shell utilities, Ansible playbooks, and bash tips. No GPU or HPC-specific content here — see [gpu-toolkit](https://github.com/pk-unix/gpu-toolkit) and [hpc-toolkit](https://github.com/pk-unix/hpc-toolkit) for that.
+
+---
+
+## Contents
+
+### `sysadmin/` — Day-to-day ops scripts
+| Script | What it does |
+|---|---|
+| `node-summary.sh` | One-shot node triage: OS, CPU, memory, disk, network, top processes |
+| `find-large-files.sh` | Hunt down disk hogs — by file, by directory, or by age |
+| `zombie-hunt.sh` | Find zombie processes and identify the parent that should reap them |
+| `watch-logs.sh` | Tail multiple log files simultaneously with color-coded prefixes |
+
+### `shell/` — Shell productivity
+| File | What it does |
+|---|---|
+| `useful-aliases.sh` | Aliases and bash functions for daily use — source in `.bashrc` |
+| `bash-tips.md` | Bash one-liners, awk/find/ssh tricks, loops, redirections reference |
+
+### `ansible/` — Ansible playbooks
+Playbooks for common Linux admin tasks: package management, firewall rules, cron jobs, user management, cleanup scripts.
+
+---
+
+## Quick usage
+
+```bash
+git clone https://github.com/pk-unix/Linux.git
+cd Linux
+chmod +x sysadmin/*.sh
+
+# Triage any node instantly
+./sysadmin/node-summary.sh
+
+# Find what's eating disk space
+./sysadmin/find-large-files.sh /var --dirs
+
+# Watch multiple logs at once
+./sysadmin/watch-logs.sh /var/log/syslog /var/log/auth.log
+
+# Load aliases into your shell
+source shell/useful-aliases.sh
+# Or add to ~/.bashrc:
+echo 'source ~/Linux/shell/useful-aliases.sh' &gt;&gt; ~/.bashrc
+```
+
+---
+
+## Related repos
+
+- **[gpu-toolkit](https://github.com/pk-unix/gpu-toolkit)** — nvidia-smi diagnostics, Xid watchers, GPU process mapping
+- **[hpc-toolkit](https://github.com/pk-unix/hpc-toolkit)** — NUMA tuning, huge pages, InfiniBand, CPU governors, HPC sysctl configs
+</code></pre>
+</div>
+<footer><div class="wrap">
+<a href="https://github.com/pk-unix/Linux">View on GitHub</a> · © 2026 Pravin Kumar. All rights reserved.
+</div></footer>
+<script>document.addEventListener('contextmenu', function(e){ e.preventDefault(); });</script>
+</body>
+</html>
